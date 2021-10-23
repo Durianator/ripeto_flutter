@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ripeto_flutter/screens/home_screen.dart';
 import 'package:ripeto_flutter/screens/login_screen.dart';
 
 void main() {
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       initialRoute: LoginScreen.id,
       routes: {
         LoginScreen.id: (context) => LoginScreen(),
+        HomeScreen.id: (context) => HomeScreen(),
       },
     );
   }
