@@ -1,5 +1,45 @@
 import 'package:flutter/material.dart';
 
+class ListItem {
+  int id;
+  String headerName;
+  String description;
+  bool isExpanded;
+
+  ListItem({
+    this.id,
+    this.headerName,
+    this.description,
+    this.isExpanded = false,
+  });
+}
+
+List<ListItem> generateItems(int numberOfItems) {
+  return List<ListItem>.generate(numberOfItems, (int index) {
+    return ListItem(
+      id: index,
+      headerName: 'Expansion Panel $index',
+      description: 'This is body of item number $index',
+    );
+  });
+}
+
+List<ExpansionPanel> _getExpansionPanels(List<ListItem> _items) {
+  return _items.map<ExpansionPanel>((ListItem item) {
+    return ExpansionPanel(
+      headerBuilder: (BuildContext context, bool isExpanded) {
+        return ListTile(
+          title: Text(item.headerName),
+        );
+      },
+      body: ListTile(
+        title: Text(item.description),
+      ),
+      isExpanded: item.isExpanded,
+    );
+  }).toList();
+}
+
 class HomeScreen extends StatefulWidget {
   static const String id = 'home_screen';
 
@@ -8,7 +48,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<bool> _isOpen;
+  List<ListItem> _items = generateItems(15);
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +73,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            ExpansionPanelList(
-              expansionCallback: (i, isOpen) {
-                setState(() {
-                  _isOpen[i] = !isOpen;
-                });
-              },
-              children: [
-                ExpansionPanel(
-                  headerBuilder: (context, isOpen) {
-                    return Text('Hello World');
-                  },
-                  body: Text('Habit Name'),
-                  isExpanded: _isOpen[0],
-                ),
-              ],
+            SingleChildScrollView(
+              child: ExpansionPanelList(
+                animationDuration: Duration(milliseconds: 1000),
+                children: _getExpansionPanels(_items),
+                expansionCallback: (panelIndex, isExpanded) {
+                  _items[panelIndex].isExpanded = !isExpanded;
+                  setState(() {});
+                },
+              ),
             ),
           ],
         ),
