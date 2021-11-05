@@ -18,7 +18,7 @@ List<ListItem> generateItems(int numberOfItems) {
   return List<ListItem>.generate(numberOfItems, (int index) {
     return ListItem(
       id: index,
-      headerName: 'Expansion Panel $index',
+      headerName: 'Habit $index',
       description: 'This is body of item number $index',
     );
   });
