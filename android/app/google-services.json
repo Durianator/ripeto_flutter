@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "765369182332",
+    "project_id": "ripeto-f3d02",
+    "storage_bucket": "ripeto-f3d02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765369182332:android:42c539fc46879fb86ec1f9",
+        "android_client_info": {
+          "package_name": "com.iskandarzhilmi.ripeto_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765369182332-32mo5q7n9lblduvf2jhj2av2cc5lqd2s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFxaObNt6IwhNh8iP8ndOXFkUiZF_oqNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765369182332-32mo5q7n9lblduvf2jhj2av2cc5lqd2s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

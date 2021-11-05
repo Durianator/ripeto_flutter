@@ -65,22 +65,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text('Habit List'),
                   ElevatedButton(
-                    onPressed: () {
-                      ;
-                    },
+                    onPressed: () {},
                     child: Text('Add'),
                   ),
                 ],
               ),
             ),
-            SingleChildScrollView(
-              child: ExpansionPanelList(
-                animationDuration: Duration(milliseconds: 1000),
-                children: _getExpansionPanels(_items),
-                expansionCallback: (panelIndex, isExpanded) {
-                  _items[panelIndex].isExpanded = !isExpanded;
-                  setState(() {});
-                },
+            Expanded(
+              child: SingleChildScrollView(
+                child: ExpansionPanelList(
+                  animationDuration: Duration(milliseconds: 1000),
+                  children: _getExpansionPanels(_items),
+                  expansionCallback: (panelIndex, isExpanded) {
+                    _items[panelIndex].isExpanded = !isExpanded;
+                    setState(() {});
+                  },
+                ),
               ),
             ),
           ],

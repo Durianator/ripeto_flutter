@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ripeto_flutter/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -10,6 +13,30 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String email;
   String password;
+
+  bool _initialized = false;
+  bool _error = false;
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+  GoogleSignIn googleSignIn = GoogleSignIn();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  // void initializeFlutterFire() async {
+  //   try {
+  //     await Firebase.initializeApp();
+  //     setState(() {
+  //       _initialized = true;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       _error = true;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +94,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 30.0,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    try {
+                      final user = googleSignIn.signIn();
+
+                      if (user != null) {
+                        Navigator.pushNamed(context, HomeScreen.id);
+                      }
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
                   child: Text('Login'),
                   style: ButtonStyle(),
                 ),
