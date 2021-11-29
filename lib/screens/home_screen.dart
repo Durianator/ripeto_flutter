@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ripeto_flutter/screens/add_habit_screen.dart';
+import 'package:ripeto_flutter/service/auth_service.dart';
 
 class ListItem {
   int id;
@@ -48,7 +53,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _auth = FirebaseAuth.instance;
+  User loggedInUser;
+
   List<ListItem> _items = generateItems(15);
+
+  final _db = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        print('Get current user successful');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,15 +88,26 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.symmetric(
                 vertical: 10.0,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Habit List'),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Add'),
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Habit List',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, AddHabitScreen.id);
+                      },
+                      child: Text('Add'),
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
