@@ -103,7 +103,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                       print(e);
                     }
                   },
-                  child: Text('Register'),
+                  child: Text('Add habit'),
                   style: ButtonStyle(),
                 ),
                 SizedBox(
