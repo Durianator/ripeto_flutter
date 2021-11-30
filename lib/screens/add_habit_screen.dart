@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:day_picker/day_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:ripeto_flutter/component.dart';
@@ -17,10 +19,32 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
   String reminderTime;
   String frequency;
 
+  List<DayInWeek> _days = [
+    DayInWeek(
+      "Sun",
+    ),
+    DayInWeek(
+      "Mon",
+    ),
+    DayInWeek("Tue", isSelected: true),
+    DayInWeek(
+      "Wed",
+    ),
+    DayInWeek(
+      "Thu",
+    ),
+    DayInWeek(
+      "Fri",
+    ),
+    DayInWeek(
+      "Sat",
+    ),
+  ];
+
   bool showSpinner = false;
 
   final _auth = FirebaseAuth.instance;
-  final _db = FirebaseFirestore.instance;
+  final _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -63,21 +87,48 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                 SizedBox(
                   height: 20.0,
                 ),
-                RipetoTextField(
-                  onChanged: (value) {
-                    reminderTime = value;
+                InkWell(
+                  child: Text('Choose Time'),
+                  onTap: () {
+                    showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                      initialEntryMode: TimePickerEntryMode.dial,
+                      onEntryModeChanged: (value) {
+                        print(value);
+                      },
+                    );
                   },
-                  labelText: 'Reminder Time',
+                ),
+                Container(
+                  height: 40.0,
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.time,
+                    onDateTimeChanged: (value) {
+                      reminderTime = TimeOfDay.fromDateTime(value).toString();
+                      print(reminderTime);
+                    },
+                    initialDateTime: DateTime.now(),
+                  ),
                 ),
                 SizedBox(
                   height: 20.0,
                 ),
-                RipetoTextField(
-                  onChanged: (value) {
-                    frequency = value;
-                  },
-                  labelText: 'Frequency',
+                Text('Frequency'),
+                SizedBox(
+                  height: 20.0,
                 ),
+                SelectWeekDays(
+                    fontSize: 10.0,
+                    boxDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.0),
+                      color: Colors.blue,
+                    ),
+                    onSelect: (value) {
+                      frequency = value.toString();
+                      print(value);
+                    },
+                    days: _days),
                 SizedBox(
                   height: 20.0,
                 ),
@@ -88,7 +139,8 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                     });
                     try {
                       final uid = _auth.currentUser.uid;
-                      await _db
+                      //TODO: Refactor this. Study about state management.
+                      await _firestore
                           .collection('userData')
                           .doc(uid)
                           .collection('habit')
@@ -99,11 +151,12 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                         'frequency': frequency
                       });
                       showSpinner = false;
+                      Navigator.pop(context);
                     } catch (e) {
                       print(e);
                     }
                   },
-                  child: Text('Add habit'),
+                  child: Text('Add'),
                   style: ButtonStyle(),
                 ),
                 SizedBox(
