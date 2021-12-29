@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:ripeto_flutter/screens/add_habit_screen.dart';
+import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
 import 'package:ripeto_flutter/service/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,8 +17,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _auth = FirebaseAuth.instance;
   User loggedInUser;
-
-  // List<ListItem> habitList;
 
   List<ListItem> _items = generateItems(5);
 
@@ -68,86 +68,23 @@ class _HomeScreenState extends State<HomeScreen> {
     ;
   }
 
+  void deleteHabit(habitId) async {
+    _firestore
+        .collection('userData')
+        .doc(loggedInUser.uid)
+        .collection('habit')
+        .doc(habitId)
+        .delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 10.0,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Habit List',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, AddHabitScreen.id);
-                      },
-                      child: Text('Add'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Expanded(
-            //   child: SingleChildScrollView(
-            //     child: ExpansionPanelList(
-            //       animationDuration: Duration(milliseconds: 1000),
-            //       children: _getExpansionPanels(_items),
-            //       expansionCallback: (panelIndex, isExpanded) {
-            //         _items[panelIndex].isExpanded = !isExpanded;
-            //         setState(() {});
-            //       },
-            //     ),
-            //   ),
-            // ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore
-                      .collection('userData')
-                      .doc(loggedInUser.uid)
-                      .collection('habit')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final habits = snapshot.data.docs;
-                      List<ListItem> habitWidget = [];
-                      for (var habit in habits) {
-                        habitWidget.add(ListItem(
-                          headerName: habit.get('habit_name') ?? '',
-                          description: habit.get('reminder_time') ?? '',
-                        ));
-                        print(habit.get('habit_name'));
-                      }
-                      return ExpansionPanelList(
-                        animationDuration: Duration(milliseconds: 1000),
-                        children: _getExpansionPanels(habitWidget),
-                        expansionCallback: (panelIndex, isExpanded) {
-                          habitWidget[panelIndex].isExpanded = !isExpanded;
-                          setState(() {});
-                        },
-                      );
-                    } else if (!snapshot.hasData) {
-                      return Text('No data');
-                    } else {
-                      return Text('Error');
-                    }
-                  },
-                ),
-              ),
-            ),
+            homeScreenHeader(context),
+            homeScreenBody(),
             SizedBox(
               height: 20.0,
             ),
@@ -161,6 +98,212 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Text('Sign out'),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Expanded homeScreenBody() {
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 30.0,
+          ),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: _firestore
+                .collection('userData')
+                .doc(loggedInUser.uid)
+                .collection('habit')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final habits = snapshot.data.docs;
+                List<Widget> allHabitCard = [];
+
+                for (var habit in habits) {
+                  allHabitCard.add(
+                    habitCard(habit),
+                  );
+
+                  allHabitCard.add(
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                  );
+
+                  print(habit.get('habit_name'));
+                }
+                return Expanded(
+                    child: Column(
+                  children: allHabitCard,
+                ));
+              } else if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              } else {
+                return Text('Error');
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Padding homeScreenHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 10.0,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Habit List',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AddHabitScreen.id);
+              },
+              child: Text('Add'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container habitCard(QueryDocumentSnapshot<Object> habit) {
+    return Container(
+      height: 160,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              habit.get('habit_name'),
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: 5.0,
+            ),
+            Text(
+              habit.get('trigger_event'),
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+            SizedBox(
+              height: 5.0,
+            ),
+            Text(
+              habit.get('reminder_time'),
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+            SizedBox(
+              height: 5.0,
+            ),
+            Text(
+              habit.get('frequency'),
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Expanded(
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Icon(
+                      Icons.done,
+                      color: Colors.green,
+                    ),
+                    InkWell(
+                      child: Icon(Icons.edit),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          EditHabitScreen.id,
+                          arguments: {
+                            'uid': loggedInUser.uid,
+                            'habitId': habit.id
+                          },
+                        );
+                      },
+                    ),
+                    InkWell(
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onTap: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Delete?'),
+                              content: Text('Do you want to delete?'),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('No'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    //TODO: REfactor this delete
+                                    deleteHabit(habit.id);
+
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Yes'),
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
         ),
       ),

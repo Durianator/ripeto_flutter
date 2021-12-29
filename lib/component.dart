@@ -1,3 +1,4 @@
+import 'package:day_picker/day_picker.dart';
 import 'package:flutter/material.dart';
 
 class RipetoTextField extends StatelessWidget {
@@ -25,3 +26,27 @@ class RipetoTextField extends StatelessWidget {
     );
   }
 }
+
+List<DayInWeek> kDayList = [
+  DayInWeek(
+    "Sun",
+  ),
+  DayInWeek(
+    "Mon",
+  ),
+  DayInWeek(
+    "Tue",
+  ),
+  DayInWeek(
+    "Wed",
+  ),
+  DayInWeek(
+    "Thu",
+  ),
+  DayInWeek(
+    "Fri",
+  ),
+  DayInWeek(
+    "Sat",
+  ),
+];

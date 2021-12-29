@@ -72,16 +72,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(
                   height: 20.0,
                 ),
-                // SignUpScreenTextField(
-                //   onChanged: (value) {
-                //     confirmPassword = value;
-                //   },
-                //   obscureText: true,
-                //   labelText: 'Confirm Password',
-                // ),
-                // SizedBox(
-                //   height: 30.0,
-                // ),
+                RipetoTextField(
+                  onChanged: (value) {
+                    confirmPassword = value;
+                  },
+                  obscureText: true,
+                  labelText: 'Confirm Password',
+                ),
+                SizedBox(
+                  height: 30.0,
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     setState(() {

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ripeto_flutter/screens/add_habit_screen.dart';
+import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
 import 'package:ripeto_flutter/screens/home_screen.dart';
 import 'package:ripeto_flutter/screens/login_screen.dart';
 import 'package:ripeto_flutter/screens/sign_up_screen.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => HomeScreen(),
         SignUpScreen.id: (context) => SignUpScreen(),
         AddHabitScreen.id: (context) => AddHabitScreen(),
+        EditHabitScreen.id: (context) => EditHabitScreen(),
       },
     );
   }
