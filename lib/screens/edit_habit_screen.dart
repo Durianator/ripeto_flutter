@@ -44,6 +44,8 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
 
     if (arguments != null) print(arguments);
 
+    String habitName = arguments['habit_name'];
+
     return Scaffold(
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
