@@ -37,7 +37,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
         .collection('habit')
         .doc(habitId);
 
-    //helo
+    //hello
 
     print('habitMaps: ' + habitMaps.toString());
   }
