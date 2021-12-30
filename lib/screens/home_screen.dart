@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:ripeto_flutter/component.dart';
 import 'package:ripeto_flutter/screens/add_habit_screen.dart';
 import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
 import 'package:ripeto_flutter/service/auth_service.dart';
@@ -119,10 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final habits = snapshot.data.docs;
+                final habitQueryList = snapshot.data.docs;
                 List<Widget> allHabitCard = [];
 
-                for (var habit in habits) {
+                for (var habit in habitQueryList) {
                   allHabitCard.add(
                     habitCard(habit),
                   );
@@ -203,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              habit.get('habit_name'),
+              habit.get(habitNameKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 15.0,
@@ -214,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5.0,
             ),
             Text(
-              habit.get('trigger_event'),
+              habit.get(triggerEventKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 12.0,
@@ -224,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5.0,
             ),
             Text(
-              habit.get('reminder_time'),
+              habit.get(reminderTimeKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 12.0,
@@ -234,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5.0,
             ),
             Text(
-              habit.get('frequency'),
+              habit.get(frequencyKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 12.0,
@@ -287,9 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    //TODO: REfactor this delete
                                     deleteHabit(habit.id);
-
                                     Navigator.pop(context);
                                   },
                                   child: Text('Yes'),

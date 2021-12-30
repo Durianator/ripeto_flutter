@@ -14,15 +14,15 @@ class EditHabitScreen extends StatefulWidget {
 }
 
 class _EditHabitScreenState extends State<EditHabitScreen> {
-  String habitName;
-  String triggerEvent;
-  String reminderTime = TimeOfDay.now().toString();
-  String frequency;
-
   bool showSpinner = false;
 
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+
+  String habitName;
+  String triggerEvent;
+  String reminderTime;
+  String frequency;
 
   @override
   void initState() {
@@ -30,12 +30,15 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     super.initState();
   }
 
-  void getHabitData() {
-    // final habitMaps = await _firestore
-    //     .collection('userData')
-    //     .doc(uid)
-    //     .collection('habit')
-    //     .get();
+  void getHabitData(String uid, String habitId) async {
+    final habitMaps = await _firestore
+        .collection('userData')
+        .doc(uid)
+        .collection('habit')
+        .doc(habitId)
+        .get();
+
+    print('habitMaps: ' + habitMaps.toString());
   }
 
   @override
@@ -44,7 +47,10 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
 
     if (arguments != null) print(arguments);
 
-    String habitName = arguments['habit_name'];
+    String uid = arguments['uid'];
+    String habitId = arguments['habit_id'];
+
+    getHabitData(uid, habitId);
 
     return Scaffold(
       body: ModalProgressHUD(

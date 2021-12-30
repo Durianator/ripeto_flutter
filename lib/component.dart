@@ -50,3 +50,8 @@ List<DayInWeek> kDayList = [
     "Sat",
   ),
 ];
+
+const String habitNameKey = 'habit_name';
+const String triggerEventKey = 'trigger_event';
+const String reminderTimeKey = 'reminder_time';
+const String frequencyKey = 'frequency';
