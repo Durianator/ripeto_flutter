@@ -261,14 +261,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           EditHabitScreen.id,
                           arguments:
                               //TODO: Refactor
+                              {
                             'uid': loggedInUser.uid,
                             'habitId': habit.id,
-                        habitNameKey: '',
-                            triggerEventKey:'',
-                            reminderTimeKey:'',
-                            frequencyKey:'',
-
-
+                            habitNameKey: '',
+                            triggerEventKey: '',
+                            reminderTimeKey: '',
+                            frequencyKey: '',
                           },
                         );
                       },
