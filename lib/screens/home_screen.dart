@@ -259,9 +259,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushNamed(
                           context,
                           EditHabitScreen.id,
-                          arguments: {
+                          arguments:
+                              //TODO: Refactor
                             'uid': loggedInUser.uid,
-                            'habitId': habit.id
+                            'habitId': habit.id,
+                        habitNameKey: '',
+                            triggerEventKey:'',
+                            reminderTimeKey:'',
+                            frequencyKey:'',
+
+
                           },
                         );
                       },
