@@ -24,6 +24,30 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
 
+  List<DayInWeek> dayList = [
+    DayInWeek(
+      "Sun",
+    ),
+    DayInWeek(
+      "Mon",
+    ),
+    DayInWeek(
+      "Tue",
+    ),
+    DayInWeek(
+      "Wed",
+    ),
+    DayInWeek(
+      "Thu",
+    ),
+    DayInWeek(
+      "Fri",
+    ),
+    DayInWeek(
+      "Sat",
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +118,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                     frequency = value.toString();
                     print(value);
                   },
-                  days: kDayList,
+                  days: dayList,
                 ),
                 SizedBox(
                   height: 20.0,
@@ -112,6 +136,8 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                           .doc(uid)
                           .collection('habit')
                           .add({
+                        'habit_id':
+                            '', //TODO: create random id with uuid package.
                         'habit_name': habitName,
                         'trigger_event': triggerEvent,
                         'reminder_time': reminderTime,

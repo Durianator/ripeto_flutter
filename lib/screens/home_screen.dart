@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container habitCard(QueryDocumentSnapshot<Object> habit) {
+  Container habitCard(QueryDocumentSnapshot<Object> habitQuerySnapshot) {
     return Container(
       height: 160,
       width: double.infinity,
@@ -204,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              habit.get(habitNameKey),
+              habitQuerySnapshot.get(habitNameKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 15.0,
@@ -215,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5.0,
             ),
             Text(
-              habit.get(triggerEventKey),
+              habitQuerySnapshot.get(triggerEventKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 12.0,
@@ -225,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5.0,
             ),
             Text(
-              habit.get(reminderTimeKey),
+              habitQuerySnapshot.get(reminderTimeKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 12.0,
@@ -235,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5.0,
             ),
             Text(
-              habit.get(frequencyKey),
+              habitQuerySnapshot.get(frequencyKey),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 12.0,
@@ -259,15 +259,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushNamed(
                           context,
                           EditHabitScreen.id,
-                          arguments:
-                              //TODO: Refactor
-                              {
+                          arguments: {
                             'uid': loggedInUser.uid,
-                            'habitId': habit.id,
-                            habitNameKey: '',
-                            triggerEventKey: '',
-                            reminderTimeKey: '',
-                            frequencyKey: '',
+                            'habitId': habitQuerySnapshot
+                                .id, //TODO: Edit after adding id
+                            habitNameKey: habitQuerySnapshot.get(habitNameKey),
+                            triggerEventKey:
+                                habitQuerySnapshot.get(triggerEventKey),
+                            reminderTimeKey:
+                                habitQuerySnapshot.get(reminderTimeKey),
+                            frequencyKey: habitQuerySnapshot.get(frequencyKey),
                           },
                         );
                       },
@@ -294,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () async {
-                                    deleteHabit(habit.id);
+                                    deleteHabit(habitQuerySnapshot.id);
                                     Navigator.pop(context);
                                   },
                                   child: Text('Yes'),

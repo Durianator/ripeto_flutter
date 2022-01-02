@@ -21,25 +21,52 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
 
   String habitName;
   String triggerEvent;
-  String reminderTime;
-  String frequency;
+  String reminderTimeString;
+  String frequencyString;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  DateTime dateTimeNow = DateTime.now();
 
-  void getHabitData(String uid, String habitId) async {
-    final habitMaps = await _firestore
-        .collection('userData')
-        .doc(uid)
-        .collection('habit')
-        .doc(habitId);
+  List<DayInWeek> dayList = [
+    DayInWeek(
+      "Sun",
+    ),
+    DayInWeek(
+      "Mon",
+    ),
+    DayInWeek(
+      "Tue",
+    ),
+    DayInWeek(
+      "Wed",
+    ),
+    DayInWeek(
+      "Thu",
+    ),
+    DayInWeek(
+      "Fri",
+    ),
+    DayInWeek(
+      "Sat",
+    ),
+  ];
 
-    //hello
+  // void getHabitData(String uid, String habitId) async {
+  //   final habitMaps = await _firestore
+  //       .collection('userData')
+  //       .doc(uid)
+  //       .collection('habit')
+  //       .doc(habitId);
+  //
+  //   print('habitMaps: ' + habitMaps.toString());
+  // }
 
-    print('habitMaps: ' + habitMaps.toString());
+  TimeOfDay convertStringToTimeOfDay(String timeOfDayString) {
+    return TimeOfDay(
+      hour: int.parse(timeOfDayString.substring(
+          10, 12)), //Substring from hour in "TimeOfDay(XX:00)"
+      minute: int.parse(timeOfDayString.substring(
+          13, 15)), //Substring from minute in "TimeOfDay(00:XX)"
+    );
   }
 
   @override
@@ -50,8 +77,12 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
 
     String uid = arguments['uid'];
     String habitId = arguments['habit_id'];
+    habitName = arguments[habitNameKey];
+    triggerEvent = arguments[triggerEventKey];
+    reminderTimeString = arguments[reminderTimeKey];
+    frequencyString = arguments[frequencyKey];
 
-    getHabitData(uid, habitId);
+    TimeOfDay reminderTime = convertStringToTimeOfDay(reminderTimeString);
 
     return Scaffold(
       body: ModalProgressHUD(
@@ -75,6 +106,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                   height: 30.0,
                 ),
                 RipetoTextField(
+                  initialValue: habitName,
                   onChanged: (value) {
                     habitName = value;
                   },
@@ -84,6 +116,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                   height: 20.0,
                 ),
                 RipetoTextField(
+                  initialValue: triggerEvent,
                   onChanged: (value) {
                     triggerEvent = value;
                   },
@@ -92,18 +125,23 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                 SizedBox(
                   height: 20.0,
                 ),
-                InkWell(
-                  child: Text('Choose Time'),
-                ),
+                Text('Choose Time'),
                 Container(
                   height: 40.0,
                   child: CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.time,
                     onDateTimeChanged: (value) {
-                      reminderTime = TimeOfDay.fromDateTime(value).toString();
-                      print(reminderTime);
+                      reminderTimeString =
+                          TimeOfDay.fromDateTime(value).toString();
+                      print(reminderTimeString);
                     },
-                    initialDateTime: DateTime.now(),
+                    initialDateTime: DateTime(
+                      dateTimeNow.year,
+                      dateTimeNow.month,
+                      dateTimeNow.day,
+                      reminderTime.hour,
+                      reminderTime.minute,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -114,16 +152,17 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                   height: 20.0,
                 ),
                 SelectWeekDays(
-                    fontSize: 10.0,
-                    boxDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      color: Colors.blue,
-                    ),
-                    onSelect: (value) {
-                      frequency = value.toString();
-                      print(value);
-                    },
-                    days: kDayList),
+                  fontSize: 10.0,
+                  boxDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30.0),
+                    color: Colors.blue,
+                  ),
+                  onSelect: (value) {
+                    frequencyString = value.toString();
+                    print(value);
+                  },
+                  days: dayList,
+                ),
                 SizedBox(
                   height: 20.0,
                 ),
@@ -133,18 +172,19 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                       showSpinner = true;
                     });
                     try {
-                      final uid = _auth.currentUser.uid;
+                      // final uid = _auth.currentUser.uid;
                       //TODO: Refactor this. Study about state management.
                       await _firestore
                           .collection('userData')
                           .doc(uid)
                           .collection('habit')
-                          .add(
+                          .doc(habitId)
+                          .update(
                         {
                           'habit_name': habitName,
                           'trigger_event': triggerEvent,
-                          'reminder_time': reminderTime,
-                          'frequency': frequency
+                          'reminder_time': reminderTimeString,
+                          'frequency': frequencyString
                         },
                       );
                       showSpinner = false;
