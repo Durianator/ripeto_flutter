@@ -25,6 +25,8 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
 
+  List<bool> dayListBool = List.filled(7, false);
+
   List<DayInWeek> dayList = [
     DayInWeek(
       "Sun",

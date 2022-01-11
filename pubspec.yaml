@@ -26,6 +26,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   day_picker: ^2.1.0
   uuid: ^3.0.5
+  weekday_selector: ^1.0.0
 
 dev_dependencies:
   flutter_test:
