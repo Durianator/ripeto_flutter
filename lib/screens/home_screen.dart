@@ -135,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
 
                   print(habit.get('habit_name'));
+                  print(habit.id);
                 }
                 return Expanded(
                     child: Column(
@@ -261,8 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           EditHabitScreen.id,
                           arguments: {
                             'uid': loggedInUser.uid,
-                            'habitId': habitQuerySnapshot
-                                .id, //TODO: Edit after adding id
+                            habitIdKey: habitQuerySnapshot.id,
                             habitNameKey: habitQuerySnapshot.get(habitNameKey),
                             triggerEventKey:
                                 habitQuerySnapshot.get(triggerEventKey),

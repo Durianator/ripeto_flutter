@@ -50,16 +50,6 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     ),
   ];
 
-  // void getHabitData(String uid, String habitId) async {
-  //   final habitMaps = await _firestore
-  //       .collection('userData')
-  //       .doc(uid)
-  //       .collection('habit')
-  //       .doc(habitId);
-  //
-  //   print('habitMaps: ' + habitMaps.toString());
-  // }
-
   TimeOfDay convertStringToTimeOfDay(String timeOfDayString) {
     return TimeOfDay(
       hour: int.parse(timeOfDayString.substring(
@@ -76,7 +66,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     if (arguments != null) print(arguments);
 
     String uid = arguments['uid'];
-    String habitId = arguments['habit_id'];
+    String habitId = arguments[habitIdKey];
     habitName = arguments[habitNameKey];
     triggerEvent = arguments[triggerEventKey];
     reminderTimeString = arguments[reminderTimeKey];

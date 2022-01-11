@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:ripeto_flutter/component.dart';
+import 'package:uuid/uuid.dart';
 
 class AddHabitScreen extends StatefulWidget {
   static const String id = 'add_habit_screen';
@@ -136,8 +137,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                           .doc(uid)
                           .collection('habit')
                           .add({
-                        'habit_id':
-                            '', //TODO: create random id with uuid package.
+                        //TODO: create random id with uuid package.
                         'habit_name': habitName,
                         'trigger_event': triggerEvent,
                         'reminder_time': reminderTime,
