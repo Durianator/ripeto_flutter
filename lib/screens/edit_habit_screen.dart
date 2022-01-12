@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:ripeto_flutter/component.dart';
+import 'package:weekday_selector/weekday_selector.dart';
 
 class EditHabitScreen extends StatefulWidget {
   static const String id = 'edit_habit_screen';
@@ -25,30 +26,6 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
   String frequencyString;
 
   DateTime dateTimeNow = DateTime.now();
-
-  List<DayInWeek> dayList = [
-    DayInWeek(
-      "Sun",
-    ),
-    DayInWeek(
-      "Mon",
-    ),
-    DayInWeek(
-      "Tue",
-    ),
-    DayInWeek(
-      "Wed",
-    ),
-    DayInWeek(
-      "Thu",
-    ),
-    DayInWeek(
-      "Fri",
-    ),
-    DayInWeek(
-      "Sat",
-    ),
-  ];
 
   TimeOfDay convertStringToTimeOfDay(String timeOfDayString) {
     return TimeOfDay(
@@ -73,6 +50,8 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     frequencyString = arguments[frequencyKey];
 
     TimeOfDay reminderTime = convertStringToTimeOfDay(reminderTimeString);
+    List<bool> frequency = convertStringFromFirebaseToBoolList(frequencyString);
+    print(frequency);
 
     return Scaffold(
       body: ModalProgressHUD(
@@ -141,17 +120,21 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                 SizedBox(
                   height: 20.0,
                 ),
-                SelectWeekDays(
-                  fontSize: 10.0,
-                  boxDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.0),
-                    color: Colors.blue,
-                  ),
-                  onSelect: (value) {
-                    frequencyString = value.toString();
-                    print(value);
+                WeekdaySelector(
+                  onChanged: (int day) {
+                    setState(() {
+                      // Use module % 7 as Sunday's index in the array is 0 and
+                      // DateTime.sunday constant integer value is 7.
+                      final index = day % 7;
+                      // We "flip" the value in this example, but you may also
+                      // perform validation, a DB write, an HTTP call or anything
+                      // else before you actually flip the value,
+                      // it's up to your app's needs.
+                      frequency[index] = !frequency[index];
+                      print(frequency);
+                    });
                   },
-                  days: dayList,
+                  values: frequency,
                 ),
                 SizedBox(
                   height: 20.0,
@@ -174,7 +157,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                           'habit_name': habitName,
                           'trigger_event': triggerEvent,
                           'reminder_time': reminderTimeString,
-                          'frequency': frequencyString
+                          'frequency': frequency
                         },
                       );
                       showSpinner = false;
