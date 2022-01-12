@@ -257,20 +257,38 @@ class _HomeScreenState extends State<HomeScreen> {
                     InkWell(
                       child: Icon(Icons.edit),
                       onTap: () {
-                        Navigator.pushNamed(
+                        Navigator.push(
                           context,
-                          EditHabitScreen.id,
-                          arguments: {
-                            'uid': loggedInUser.uid,
-                            habitIdKey: habitQuerySnapshot.id,
-                            habitNameKey: habitQuerySnapshot.get(habitNameKey),
-                            triggerEventKey:
-                                habitQuerySnapshot.get(triggerEventKey),
-                            reminderTimeKey:
-                                habitQuerySnapshot.get(reminderTimeKey),
-                            frequencyKey: habitQuerySnapshot.get(frequencyKey),
-                          },
+                          MaterialPageRoute(
+                            builder: (context) => EditHabitScreen({
+                              'uid': loggedInUser.uid,
+                              habitIdKey: habitQuerySnapshot.id,
+                              habitNameKey:
+                                  habitQuerySnapshot.get(habitNameKey),
+                              triggerEventKey:
+                                  habitQuerySnapshot.get(triggerEventKey),
+                              reminderTimeKey:
+                                  habitQuerySnapshot.get(reminderTimeKey),
+                              frequencyKey:
+                                  habitQuerySnapshot.get(frequencyKey),
+                            }),
+                          ),
                         );
+
+                        // Navigator.pushNamed(
+                        //   context,
+                        //   EditHabitScreen.id,
+                        //   arguments: {
+                        //     'uid': loggedInUser.uid,
+                        //     habitIdKey: habitQuerySnapshot.id,
+                        //     habitNameKey: habitQuerySnapshot.get(habitNameKey),
+                        //     triggerEventKey:
+                        //         habitQuerySnapshot.get(triggerEventKey),
+                        //     reminderTimeKey:
+                        //         habitQuerySnapshot.get(reminderTimeKey),
+                        //     frequencyKey: habitQuerySnapshot.get(frequencyKey),
+                        //   },
+                        // );
                       },
                     ),
                     InkWell(

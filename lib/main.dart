@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => HomeScreen(),
         SignUpScreen.id: (context) => SignUpScreen(),
         AddHabitScreen.id: (context) => AddHabitScreen(),
-        EditHabitScreen.id: (context) => EditHabitScreen(),
+        // EditHabitScreen.id: (context) => EditHabitScreen(),
       },
     );
   }

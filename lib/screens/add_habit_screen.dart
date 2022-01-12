@@ -27,30 +27,6 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
 
   List<bool> frequency = List.filled(7, false);
 
-  List<DayInWeek> dayList = [
-    DayInWeek(
-      "Sun",
-    ),
-    DayInWeek(
-      "Mon",
-    ),
-    DayInWeek(
-      "Tue",
-    ),
-    DayInWeek(
-      "Wed",
-    ),
-    DayInWeek(
-      "Thu",
-    ),
-    DayInWeek(
-      "Fri",
-    ),
-    DayInWeek(
-      "Sat",
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,13 +113,12 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                     });
                     try {
                       final uid = _auth.currentUser.uid;
-                      //TODO: Refactor this. Study about state management.
+                      //TODO: Refactor this.
                       await _firestore
                           .collection('userData')
                           .doc(uid)
                           .collection('habit')
                           .add({
-                        //TODO: create random id with uuid package.
                         habitNameKey: habitName,
                         triggerEventKey: triggerEvent,
                         reminderTimeKey: reminderTime,

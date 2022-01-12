@@ -10,22 +10,50 @@ import 'package:weekday_selector/weekday_selector.dart';
 class EditHabitScreen extends StatefulWidget {
   static const String id = 'edit_habit_screen';
 
+  const EditHabitScreen(this.habitMap);
+
+  final Map<String, String> habitMap;
+
   @override
-  _EditHabitScreenState createState() => _EditHabitScreenState();
+  _EditHabitScreenState createState() => _EditHabitScreenState(habitMap);
 }
 
 class _EditHabitScreenState extends State<EditHabitScreen> {
+  Map<String, String> habitMap;
+
+  _EditHabitScreenState(this.habitMap);
+
   bool showSpinner = false;
 
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
 
+  String uid;
+  String habitId;
   String habitName;
   String triggerEvent;
   String reminderTimeString;
   String frequencyString;
+  TimeOfDay reminderTime;
+  List<bool> frequency;
 
   DateTime dateTimeNow = DateTime.now();
+
+  @override
+  void initState() {
+    uid = habitMap['uid'];
+    habitId = habitMap[habitIdKey];
+    habitName = habitMap[habitNameKey];
+    triggerEvent = habitMap[triggerEventKey];
+    reminderTimeString = habitMap[reminderTimeKey];
+    frequencyString = habitMap[frequencyKey];
+
+    reminderTime = convertStringToTimeOfDay(reminderTimeString);
+    frequency = convertStringFromFirebaseToBoolList(frequencyString);
+    print(frequency);
+
+    super.initState();
+  }
 
   TimeOfDay convertStringToTimeOfDay(String timeOfDayString) {
     return TimeOfDay(
@@ -38,20 +66,18 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context).settings.arguments as Map;
-
-    if (arguments != null) print(arguments);
-
-    String uid = arguments['uid'];
-    String habitId = arguments[habitIdKey];
-    habitName = arguments[habitNameKey];
-    triggerEvent = arguments[triggerEventKey];
-    reminderTimeString = arguments[reminderTimeKey];
-    frequencyString = arguments[frequencyKey];
-
-    TimeOfDay reminderTime = convertStringToTimeOfDay(reminderTimeString);
-    List<bool> frequency = convertStringFromFirebaseToBoolList(frequencyString);
-    print(frequency);
+    // if (habitMap != null) print(habitMap);
+    //
+    // String uid = habitMap['uid'];
+    // String habitId = habitMap[habitIdKey];
+    // habitName = habitMap[habitNameKey];
+    // triggerEvent = habitMap[triggerEventKey];
+    // reminderTimeString = habitMap[reminderTimeKey];
+    // frequencyString = habitMap[frequencyKey];
+    //
+    // TimeOfDay reminderTime = convertStringToTimeOfDay(reminderTimeString);
+    // List<bool> frequency = convertStringFromFirebaseToBoolList(frequencyString);
+    // print(frequency);
 
     return Scaffold(
       body: ModalProgressHUD(
@@ -146,7 +172,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                     });
                     try {
                       // final uid = _auth.currentUser.uid;
-                      //TODO: Refactor this. Study about state management.
+                      //TODO: Refactor this.
                       await _firestore
                           .collection('userData')
                           .doc(uid)
@@ -154,10 +180,10 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                           .doc(habitId)
                           .update(
                         {
-                          'habit_name': habitName,
-                          'trigger_event': triggerEvent,
-                          'reminder_time': reminderTimeString,
-                          'frequency': frequency
+                          habitNameKey: habitName,
+                          triggerEventKey: triggerEvent,
+                          reminderTimeKey: reminderTimeString,
+                          frequencyKey: frequency.toString()
                         },
                       );
                       showSpinner = false;
