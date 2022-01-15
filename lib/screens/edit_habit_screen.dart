@@ -41,6 +41,8 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
 
   @override
   void initState() {
+    super.initState();
+
     uid = habitMap['uid'];
     habitId = habitMap[habitIdKey];
     habitName = habitMap[habitNameKey];
@@ -51,8 +53,6 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     reminderTime = convertStringToTimeOfDay(reminderTimeString);
     frequency = convertStringFromFirebaseToBoolList(frequencyString);
     print(frequency);
-
-    super.initState();
   }
 
   TimeOfDay convertStringToTimeOfDay(String timeOfDayString) {

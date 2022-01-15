@@ -3,9 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:ripeto_flutter/component.dart';
 import 'package:ripeto_flutter/screens/add_habit_screen.dart';
 import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
+import 'package:ripeto_flutter/screens/real_home_screen.dart';
 import 'package:ripeto_flutter/service/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,9 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final _firestore = FirebaseFirestore.instance;
 
+  // PersistentTabController controller;
+
   @override
   void initState() {
     super.initState();
+
+    // controller = PersistentTabController(initialIndex: 0);
+
     getCurrentUser();
     getHabit();
   }
@@ -53,20 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
     for (var habit in habitMaps.docs) {
       print(habit.data());
     }
-  }
-
-  void habitStream() async {
-    final uid = loggedInUser.uid;
-    await for (var snapshot in _firestore
-        .collection('userData')
-        .doc(uid)
-        .collection('habit')
-        .snapshots()) {
-      for (var habit in snapshot.docs) {
-        print(habit.data());
-      }
-    }
-    ;
   }
 
   void deleteHabit(habitId) async {
@@ -98,6 +91,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context);
               },
               child: Text('Sign out'),
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.redAccent),
+              ),
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RealHomeScreen(),
+                  ),
+                );
+              },
+              child: Text('Real Home Screen'),
             ),
           ],
         ),
