@@ -4,8 +4,12 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:ripeto_flutter/screens/add_habit_screen.dart';
 import 'package:ripeto_flutter/screens/home_screen.dart';
 import 'package:ripeto_flutter/screens/login_screen.dart';
+import 'package:ripeto_flutter/screens/progress_screen.dart';
+import 'package:ripeto_flutter/screens/settings_screen.dart';
 
 class RealHomeScreen extends StatefulWidget {
+  static const String id = 'real_home_screen';
+
   @override
   _RealHomeScreenState createState() => _RealHomeScreenState();
 }
@@ -25,7 +29,7 @@ class _RealHomeScreenState extends State<RealHomeScreen> {
     return PersistentTabView(
       context,
       controller: controller,
-      screens: [HomeScreen(), AddHabitScreen(), LoginScreen()],
+      screens: [HomeScreen(), ProgressScreen(), SettingsScreen()],
       navBarStyle: NavBarStyle.style9,
       items: [
         PersistentBottomNavBarItem(

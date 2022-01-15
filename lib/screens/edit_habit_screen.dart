@@ -51,7 +51,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     frequencyString = habitMap[frequencyKey];
 
     reminderTime = convertStringToTimeOfDay(reminderTimeString);
-    frequency = convertStringFromFirebaseToBoolList(frequencyString);
+    frequency = convertFrequencyFromFirebaseToBoolList(frequencyString);
     print(frequency);
   }
 

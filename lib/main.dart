@@ -5,6 +5,9 @@ import 'package:ripeto_flutter/screens/add_habit_screen.dart';
 import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
 import 'package:ripeto_flutter/screens/home_screen.dart';
 import 'package:ripeto_flutter/screens/login_screen.dart';
+import 'package:ripeto_flutter/screens/progress_screen.dart';
+import 'package:ripeto_flutter/screens/real_home_screen.dart';
+import 'package:ripeto_flutter/screens/settings_screen.dart';
 import 'package:ripeto_flutter/screens/sign_up_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -33,6 +36,9 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => HomeScreen(),
         SignUpScreen.id: (context) => SignUpScreen(),
         AddHabitScreen.id: (context) => AddHabitScreen(),
+        RealHomeScreen.id: (context) => RealHomeScreen(),
+        ProgressScreen.id: (context) => ProgressScreen(),
+        SettingsScreen.id: (context) => SettingsScreen(),
         // EditHabitScreen.id: (context) => EditHabitScreen(),
       },
     );

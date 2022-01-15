@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:ripeto_flutter/screens/real_home_screen.dart';
 import 'package:ripeto_flutter/screens/sign_up_screen.dart';
 import 'package:ripeto_flutter/component.dart';
 
@@ -92,7 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             email: email, password: password);
 
                         if (user != null) {
-                          Navigator.pushNamed(context, HomeScreen.id);
+                          print('User is not null');
+                          Navigator.pushNamed(context, RealHomeScreen.id);
                         }
                         setState(() {
                           showSpinner = false;
@@ -102,19 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                   ),
-                  // SizedBox(
-                  //   height: 30.0,
-                  // ),
-                  // SignInButton(Buttons.Google, onPressed: () {
-                  //   try {
-                  //     final user = googleSignIn.signIn();
-                  //     if (user != null) {
-                  //       Navigator.pushNamed(context, HomeScreen.id);
-                  //     }
-                  //   } catch (e) {
-                  //     print(e);
-                  //   }
-                  // }),
                   SizedBox(
                     height: 20.0,
                   ),

@@ -21,8 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final _auth = FirebaseAuth.instance;
   User loggedInUser;
 
-  List<ListItem> _items = generateItems(5);
-
   final _firestore = FirebaseFirestore.instance;
 
   // PersistentTabController controller;
@@ -92,19 +90,28 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Text('Sign out'),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding homeScreenHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: 10.0,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            mainScreenTitle('Habit List'),
             ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.redAccent),
-              ),
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RealHomeScreen(),
-                  ),
-                );
+              onPressed: () {
+                Navigator.pushNamed(context, AddHabitScreen.id);
               },
-              child: Text('Real Home Screen'),
+              child: Text('Add'),
             ),
           ],
         ),
@@ -160,38 +167,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Padding homeScreenHeader(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: 10.0,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Habit List',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AddHabitScreen.id);
-              },
-              child: Text('Add'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Container habitCard(QueryDocumentSnapshot<Object> habitQuerySnapshot) {
     return Container(
-      height: 160,
+      height: 250.0,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -233,7 +211,8 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5.0,
             ),
             Text(
-              habitQuerySnapshot.get(reminderTimeKey),
+              convertReminderTimeFirebaseToReminderTimeString(
+                  habitQuerySnapshot.get(reminderTimeKey)),
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontSize: 12.0,
@@ -242,13 +221,14 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 5.0,
             ),
-            Text(
-              habitQuerySnapshot.get(frequencyKey),
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 12.0,
-              ),
-            ),
+            // Text(
+            //   habitQuerySnapshot.get(frequencyKey),
+            //   textAlign: TextAlign.start,
+            //   style: TextStyle(
+            //     fontSize: 12.0,
+            //   ),
+            // ),
+            buildChipForHabitCard(habitQuerySnapshot.get(frequencyKey)),
             SizedBox(
               height: 10.0,
             ),
@@ -281,21 +261,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             }),
                           ),
                         );
-
-                        // Navigator.pushNamed(
-                        //   context,
-                        //   EditHabitScreen.id,
-                        //   arguments: {
-                        //     'uid': loggedInUser.uid,
-                        //     habitIdKey: habitQuerySnapshot.id,
-                        //     habitNameKey: habitQuerySnapshot.get(habitNameKey),
-                        //     triggerEventKey:
-                        //         habitQuerySnapshot.get(triggerEventKey),
-                        //     reminderTimeKey:
-                        //         habitQuerySnapshot.get(reminderTimeKey),
-                        //     frequencyKey: habitQuerySnapshot.get(frequencyKey),
-                        //   },
-                        // );
                       },
                     ),
                     InkWell(
@@ -340,44 +305,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-class ListItem {
-  int id;
-  String headerName;
-  String description;
-  bool isExpanded;
-
-  ListItem({
-    this.id,
-    this.headerName,
-    this.description,
-    this.isExpanded = false,
-  });
-}
-
-List<ListItem> generateItems(int numberOfItems) {
-  return List<ListItem>.generate(numberOfItems, (int index) {
-    return ListItem(
-      id: index,
-      headerName: 'Habit  $index',
-      description: 'This is body of item number $index',
-    );
-  });
-}
-
-List<ExpansionPanel> _getExpansionPanels(List<ListItem> _items) {
-  return _items.map<ExpansionPanel>((ListItem item) {
-    return ExpansionPanel(
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return ListTile(
-          title: Text(item.headerName),
-        );
-      },
-      body: ListTile(
-        title: Text(item.description),
-      ),
-      isExpanded: item.isExpanded,
-    );
-  }).toList();
 }
