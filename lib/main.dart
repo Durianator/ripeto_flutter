@@ -14,36 +14,15 @@ import 'package:ripeto_flutter/screens/real_home_screen.dart';
 import 'package:ripeto_flutter/screens/settings_screen.dart';
 import 'package:ripeto_flutter/screens/sign_up_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ripeto_flutter/service/notification_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
-//   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
-// // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-//   const AndroidInitializationSettings initializationSettingsAndroid =
-//       AndroidInitializationSettings('app_icon');
-//
-//   final InitializationSettings initializationSettings = InitializationSettings(
-//     android: initializationSettingsAndroid,
-//   );
-//   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-//       onSelectNotification: selectNotification);
-//
-//   AwesomeNotifications().initialize(
-//       // set the icon to null if you want to use the default app icon
-//       'resource://drawable/res_app_icon',
-//       [
-//         NotificationChannel(
-//             channelGroupKey: 'basic_channel_group',
-//             channelKey: 'basic_channel',
-//             channelName: 'Basic notifications',
-//             channelDescription: 'Notification channel for basic tests',
-//             defaultColor: Color(0xFF9D50DD),
-//             ledColor: Colors.white)
-//       ],
-//       debug: true);
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService().init();
+  tz.initializeTimeZones();
 
   runApp(MyApp());
 }
@@ -54,6 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Ripeto',
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(

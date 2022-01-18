@@ -28,26 +28,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             settingsOption(
               'Notification Setting',
               () {
-                Navigator.pushNamed(context, HomeScreen.id);
+                // NotificationService().scheduleNotifications();
               },
             ),
             Divider(height: 0.0),
             settingsOption(
               'Update Profile',
               () {
-                // AwesomeNotifications().createNotification(
-                //     content: NotificationContent(
-                //         id: 10,
-                //         channelKey: 'basic_channel',
-                //         title: 'Simple Notification',
-                //         body: 'Simple body'));
+                NotificationService().showNotification();
               },
             ),
             Divider(height: 0.0),
             settingsOption(
               'Logout',
               () async {
-                // await _auth.signOut();
                 await _auth.signOut();
                 Navigator.of(context, rootNavigator: true)
                     .pushNamedAndRemoveUntil(

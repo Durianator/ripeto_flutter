@@ -1,6 +1,8 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:ripeto_flutter/screens/add_habit_screen.dart';
 import 'package:ripeto_flutter/screens/home_screen.dart';
@@ -17,18 +19,26 @@ class RealHomeScreen extends StatefulWidget {
 
 class _RealHomeScreenState extends State<RealHomeScreen> {
   PersistentTabController controller;
+  final _auth = FirebaseAuth.instance;
+  User loggedInUser;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     controller = PersistentTabController(initialIndex: 0);
+  }
 
-    // AwesomeNotifications()
-    //     .actionStream
-    //     .listen((ReceivedNotification receivedNotification) {
-    //   Navigator.of(context).pushNamed(RealHomeScreen.id);
-    // });
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        print('Get current user successful');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
