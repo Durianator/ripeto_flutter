@@ -7,6 +7,7 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:ripeto_flutter/component.dart';
 import 'package:ripeto_flutter/screens/add_habit_screen.dart';
 import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
+import 'package:ripeto_flutter/screens/login_screen.dart';
 import 'package:ripeto_flutter/screens/real_home_screen.dart';
 import 'package:ripeto_flutter/service/auth_service.dart';
 
@@ -76,19 +77,13 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Column(
           children: [
             homeScreenHeader(context),
+            Divider(
+              height: 0.0,
+              thickness: 1.0,
+            ),
             homeScreenBody(),
             SizedBox(
               height: 20.0,
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.redAccent),
-              ),
-              onPressed: () async {
-                await _auth.signOut();
-                Navigator.pop(context);
-              },
-              child: Text('Sign out'),
             ),
           ],
         ),
@@ -100,21 +95,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 10.0,
+        horizontal: 20.0,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            mainScreenTitle('Habit List'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AddHabitScreen.id);
-              },
-              child: Text('Add'),
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          mainScreenTitle('Habit List'),
+          ElevatedButton(
+            onPressed: () {
+              pushNewScreen(
+                context,
+                screen: AddHabitScreen(),
+                withNavBar: false,
+                pageTransitionAnimation: PageTransitionAnimation.cupertino,
+              );
+              Navigator.pushNamed(context, AddHabitScreen.id);
+            },
+            child: Text('Add'),
+          ),
+        ],
       ),
     );
   }

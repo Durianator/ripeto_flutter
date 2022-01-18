@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -22,6 +23,12 @@ class _RealHomeScreenState extends State<RealHomeScreen> {
     // TODO: implement initState
     super.initState();
     controller = PersistentTabController(initialIndex: 0);
+
+    // AwesomeNotifications()
+    //     .actionStream
+    //     .listen((ReceivedNotification receivedNotification) {
+    //   Navigator.of(context).pushNamed(RealHomeScreen.id);
+    // });
   }
 
   @override

@@ -1,6 +1,11 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ripeto_flutter/component.dart';
 import 'package:ripeto_flutter/screens/home_screen.dart';
+import 'package:ripeto_flutter/screens/login_screen.dart';
+import 'package:ripeto_flutter/screens/real_home_screen.dart';
+import 'package:ripeto_flutter/service/notification_api.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const String id = 'settings_screen';
@@ -9,6 +14,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,26 +24,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             settingsScreenHeader(),
-            Divider(),
+            Divider(height: 0.0),
             settingsOption(
               'Notification Setting',
               () {
                 Navigator.pushNamed(context, HomeScreen.id);
               },
             ),
-            Divider(),
+            Divider(height: 0.0),
             settingsOption(
               'Update Profile',
               () {
-                Navigator.pushNamed(context, HomeScreen.id);
+                // AwesomeNotifications().createNotification(
+                //     content: NotificationContent(
+                //         id: 10,
+                //         channelKey: 'basic_channel',
+                //         title: 'Simple Notification',
+                //         body: 'Simple body'));
               },
             ),
-            Divider(),
+            Divider(height: 0.0),
             settingsOption(
               'Logout',
-              () {
+              () async {
                 // await _auth.signOut();
-                Navigator.pop(context);
+                await _auth.signOut();
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamedAndRemoveUntil(
+                        LoginScreen.id, (Route<dynamic> route) => false);
               },
             ),
           ],
@@ -49,10 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return InkWell(
       child: Container(
         width: double.infinity,
-        margin: EdgeInsets.symmetric(
-          vertical: 5.0,
-          horizontal: 15.0,
-        ),
+        margin: EdgeInsets.all(15.0),
         child: Text(
           settingsName,
           style: TextStyle(
