@@ -10,6 +10,8 @@ import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
 import 'package:ripeto_flutter/screens/login_screen.dart';
 import 'package:ripeto_flutter/screens/real_home_screen.dart';
 import 'package:ripeto_flutter/service/auth_service.dart';
+import 'package:ripeto_flutter/service/notification_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = 'home_screen';
@@ -21,19 +23,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _auth = FirebaseAuth.instance;
   User loggedInUser;
+  SharedPreferences prefs;
 
   final _firestore = FirebaseFirestore.instance;
 
-  // PersistentTabController controller;
+  void storeUid() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.setString('uid', loggedInUser.uid);
+    print(prefs.getString('uid'));
+  }
 
   @override
   void initState() {
     super.initState();
-
-    // controller = PersistentTabController(initialIndex: 0);
-
     getCurrentUser();
-    getHabit();
+    storeUid();
   }
 
   void getCurrentUser() {
@@ -45,19 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       print(e);
-    }
-  }
-
-  void getHabit() async {
-    final uid = loggedInUser.uid;
-    final habitMaps = await _firestore
-        .collection('userData')
-        .doc(uid)
-        .collection('habit')
-        .get();
-
-    for (var habit in habitMaps.docs) {
-      print(habit.data());
     }
   }
 
@@ -82,8 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
               thickness: 1.0,
             ),
             homeScreenBody(),
-            SizedBox(
-              height: 20.0,
+            Divider(
+              height: 0.0,
+              thickness: 1.0,
             ),
           ],
         ),
@@ -121,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Expanded homeScreenBody() {
     return Expanded(
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 30.0,
@@ -134,21 +127,21 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final habitQueryList = snapshot.data.docs;
-                List<Widget> allHabitCard = [];
+                List<Widget> allHabitCard = [
+                  SizedBox(height: 20.0),
+                ]; //Sized box before the first habit card.
 
-                for (var habit in habitQueryList) {
+                for (int i = 0; i < habitQueryList.length; i++) {
+                  var habit = habitQueryList[i];
+                  NotificationService().scheduleNotifications(i, habit);
+
                   allHabitCard.add(
                     habitCard(habit),
                   );
-
-                  allHabitCard.add(
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                  );
-
-                  print(habit.get('habit_name'));
-                  print(habit.id);
+                  allHabitCard.add(SizedBox(height: 20.0));
+                  print('Habit card ' +
+                      habit.get('habit_name') +
+                      ' generation successful.');
                 }
                 return Expanded(
                     child: Column(
@@ -220,13 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 5.0,
             ),
-            // Text(
-            //   habitQuerySnapshot.get(frequencyKey),
-            //   textAlign: TextAlign.start,
-            //   style: TextStyle(
-            //     fontSize: 12.0,
-            //   ),
-            // ),
             buildChipForHabitCard(habitQuerySnapshot.get(frequencyKey)),
             SizedBox(
               height: 10.0,

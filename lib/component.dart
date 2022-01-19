@@ -56,6 +56,15 @@ Text mainScreenTitle(String title) {
   );
 }
 
+TimeOfDay convertStringToTimeOfDay(String timeOfDayString) {
+  return TimeOfDay(
+    hour: int.parse(timeOfDayString.substring(
+        10, 12)), //Substring from hour in "TimeOfDay(XX:00)"
+    minute: int.parse(timeOfDayString.substring(
+        13, 15)), //Substring from minute in "TimeOfDay(00:XX)"
+  );
+}
+
 List<bool> convertFrequencyFromFirebaseToBoolList(String boolListFromFirebase) {
   String boolListFromFirebaseCropped = boolListFromFirebase.substring(1,
       boolListFromFirebase.length - 1); //This line of code removes '[' and ']'.
