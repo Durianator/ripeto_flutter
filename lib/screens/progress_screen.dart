@@ -51,7 +51,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           padding: const EdgeInsets.all(20.0),
                           child: Center(
                             child: Text(
-                              '5 Days Streak',
+                              '5 Day Streak',
                               style: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
