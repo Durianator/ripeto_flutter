@@ -28,7 +28,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       padding: EdgeInsets.all(30.0),
                       child: TableCalendar(
                         firstDay: DateTime.utc(2020),
-                        lastDay: DateTime.utc(2023),
+                        lastDay: DateTime.utc(2025),
                         focusedDay: focusedDay,
                         onPageChanged: (daySelected) {
                           setState(() {
