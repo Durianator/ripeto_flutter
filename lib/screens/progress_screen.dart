@@ -27,8 +27,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     Padding(
                       padding: EdgeInsets.all(30.0),
                       child: TableCalendar(
-                        firstDay: DateTime.utc(2022, 1, 1),
-                        lastDay: DateTime.utc(2022, 1, 21),
+                        firstDay: DateTime.utc(2020),
+                        lastDay: DateTime.utc(2023),
                         focusedDay: focusedDay,
                         onPageChanged: (daySelected) {
                           setState(() {
@@ -47,19 +47,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             Radius.circular(20),
                           ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Center(
-                            child: Text(
-                              '5 Day Streak',
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
+                        child: streakCard(5),
                       ),
                     )
                   ],
@@ -71,6 +59,22 @@ class _ProgressScreenState extends State<ProgressScreen> {
               thickness: 1.0,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Padding streakCard(int day) {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Center(
+        child: Text(
+          day.toString() + ' Day(s) Streak',
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     );

@@ -47,7 +47,7 @@ class _RealHomeScreenState extends State<RealHomeScreen> {
       context,
       controller: controller,
       screens: [HomeScreen(), ProgressScreen(), SettingsScreen()],
-      navBarStyle: NavBarStyle.style9,
+      navBarStyle: NavBarStyle.style6,
       items: [
         PersistentBottomNavBarItem(
           icon: Icon(CupertinoIcons.home),
