@@ -8,7 +8,6 @@ import 'package:ripeto_flutter/screens/add_habit_screen.dart';
 import 'package:ripeto_flutter/screens/edit_habit_screen.dart';
 import 'package:ripeto_flutter/screens/login_screen.dart';
 import 'package:ripeto_flutter/screens/real_home_screen.dart';
-import 'package:ripeto_flutter/service/auth_service.dart';
 import 'package:ripeto_flutter/service/notification_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
   SharedPreferences prefs;
 
   final _firestore = FirebaseFirestore.instance;
+
+  bool showSpinner = false;
 
   void storeUid() async {
     prefs = await SharedPreferences.getInstance();
@@ -60,23 +61,47 @@ class _HomeScreenState extends State<HomeScreen> {
         .delete();
   }
 
+  void checkOffHabit(String habitId) async {
+    setState(() {
+      showSpinner = true;
+    });
+    try {
+      final uid = _auth.currentUser.uid;
+      //TODO: Add check off habit feature.
+      await _firestore
+          .collection('userData')
+          .doc(uid)
+          .collection('habit')
+          .doc(habitId)
+          .collection('habitCompleted')
+          .add({'timestamp': DateTime.now()});
+      showSpinner = false;
+      Navigator.pop(context);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: [
-            homeScreenHeader(context),
-            Divider(
-              height: 0.0,
-              thickness: 1.0,
-            ),
-            homeScreenBody(),
-            Divider(
-              height: 0.0,
-              thickness: 1.0,
-            ),
-          ],
+        body: ModalProgressHUD(
+          inAsyncCall: showSpinner,
+          child: Column(
+            children: [
+              homeScreenHeader(context),
+              Divider(
+                height: 0.0,
+                thickness: 1.0,
+              ),
+              homeScreenBody(),
+              Divider(
+                height: 0.0,
+                thickness: 1.0,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -221,10 +246,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    ),
+                    InkWell(
+                        child: Icon(
+                          Icons.done,
+                          color: Colors.green,
+                        ),
+                        onTap: () async {
+                          String habitId = habitQuerySnapshot.get(habitIdKey);
+                          checkOffHabit(habitId);
+                        }),
                     InkWell(
                       child: Icon(Icons.edit),
                       onTap: () {

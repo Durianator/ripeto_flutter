@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:day_picker/day_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:ripeto_flutter/component.dart';
-import 'package:uuid/uuid.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 
 class AddHabitScreen extends StatefulWidget {

@@ -1,4 +1,3 @@
-import 'package:day_picker/day_picker.dart';
 import 'package:flutter/material.dart';
 
 const String habitNameKey = 'habit_name';
