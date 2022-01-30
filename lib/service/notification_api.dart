@@ -59,35 +59,9 @@ class NotificationService {
         convertStringToTimeOfDay(reminderTimeString);
 
     List<String> frequency =
-        convertFrequencyFirebaseDataToDayList(frequencyString);
+        convertFrequencyFirebaseDataToDayListString(frequencyString);
 
-    List<int> dayListInt = [];
-
-    for (var element in frequency) {
-      switch (element) {
-        case 'Monday':
-          dayListInt.add(1);
-          break;
-        case 'Tuesday':
-          dayListInt.add(2);
-          break;
-        case 'Wednesday':
-          dayListInt.add(3);
-          break;
-        case 'Thursday':
-          dayListInt.add(4);
-          break;
-        case 'Friday':
-          dayListInt.add(5);
-          break;
-        case 'Saturday':
-          dayListInt.add(6);
-          break;
-        case 'Sunday':
-          dayListInt.add(7);
-          break;
-      }
-    }
+    List<int> dayListInt = convertFrequencyStringToDayListInt(frequencyString);
 
     DateTime now = DateTime.now();
     DateTime reminderTimeDateTime = DateTime(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:collection';
 import 'package:table_calendar/table_calendar.dart';
@@ -90,7 +91,8 @@ String convertReminderTimeFirebaseToReminderTimeString(
       10, 15); //Extract XX:XX from "TimeOfDay(XX:XX)".
 }
 
-List<String> convertFrequencyFirebaseDataToDayList(String firebaseFrequency) {
+List<String> convertFrequencyFirebaseDataToDayListString(
+    String firebaseFrequency) {
   List<bool> boolDayList =
       convertFrequencyFromFirebaseToBoolList(firebaseFrequency);
   List<String> trueDayList = [];
@@ -102,6 +104,30 @@ List<String> convertFrequencyFirebaseDataToDayList(String firebaseFrequency) {
   }
 
   return trueDayList;
+}
+
+List<int> convertFrequencyStringToDayListInt(String frequencyString) {
+  List<bool> boolDayList = [];
+
+  String boolListFromFirebaseCropped = frequencyString.substring(
+      1, frequencyString.length - 1); //This line of code removes '[' and ']'.
+
+  List boolListString = boolListFromFirebaseCropped.split(',');
+
+  boolListString.forEach((element) {
+    if (element.toString().contains('true'))
+      boolDayList.add(true);
+    else
+      boolDayList.add(false);
+  });
+
+  List<int> dayListInt = [];
+
+  for (int i = 0; i < boolDayList.length; i++) {
+    if (boolDayList[i]) dayListInt.add(i + 1);
+  }
+
+  return dayListInt;
 }
 
 Widget buildChipForHabitCard(String firebaseFrequency) {
@@ -170,3 +196,61 @@ List<DateTime> daysInRange(DateTime first, DateTime last) {
 final kToday = DateTime.now();
 final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day);
 final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
+
+List<int> convertDayListStringToDayListInt(List dayListString) {
+  List<int> dayListInt = [];
+
+  for (var element in dayListString) {
+    switch (element) {
+      case 'Monday':
+        dayListInt.add(1);
+        break;
+      case 'Tuesday':
+        dayListInt.add(2);
+        break;
+      case 'Wednesday':
+        dayListInt.add(3);
+        break;
+      case 'Thursday':
+        dayListInt.add(4);
+        break;
+      case 'Friday':
+        dayListInt.add(5);
+        break;
+      case 'Saturday':
+        dayListInt.add(6);
+        break;
+      case 'Sunday':
+        dayListInt.add(7);
+        break;
+    }
+  }
+  return dayListInt;
+}
+
+DateTime findEarliestDateTime(List<DateTime> dateTimeList) {
+  DateTime minDate = dateTimeList[0];
+  dateTimeList.forEach((date) {
+    if (date.isBefore(minDate)) {
+      minDate = date;
+    }
+  });
+  return minDate;
+}
+
+List<DateTime> convertQueryListToDateTimeList(
+    List<QueryDocumentSnapshot<Object>> historyQueryList) {
+  List<DateTime> historyDateTimeList = [];
+
+  for (int i = 0; i < historyQueryList.length; i++) {
+    DateTime historyDateTime = DateTime.parse(
+        historyQueryList[i].get('timestamp').toDate().toString());
+
+    historyDateTimeList.add(historyDateTime);
+  }
+
+  return historyDateTimeList;
+}
+
+List<DateTime> findFrequencyDateTime(
+    DateTime earliestDateTime, QueryDocumentSnapshot habitQuery) {}

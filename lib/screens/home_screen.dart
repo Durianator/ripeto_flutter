@@ -255,38 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       .snapshots(),
                   builder: (context, historySnapshot) {
                     List<String> frequency =
-                        convertFrequencyFirebaseDataToDayList(
+                        convertFrequencyFirebaseDataToDayListString(
                             habitQuerySnapshot.get('frequency'));
 
-                    List<int> dayListInt = [];
-
-                    for (var element in frequency) {
-                      switch (element) {
-                        case 'Monday':
-                          dayListInt.add(1);
-                          break;
-                        case 'Tuesday':
-                          dayListInt.add(2);
-                          break;
-                        case 'Wednesday':
-                          dayListInt.add(3);
-                          break;
-                        case 'Thursday':
-                          dayListInt.add(4);
-                          break;
-                        case 'Friday':
-                          dayListInt.add(5);
-                          break;
-                        case 'Saturday':
-                          dayListInt.add(6);
-                          break;
-                        case 'Sunday':
-                          dayListInt.add(7);
-                          break;
-                      }
-                    }
-
-                    // if (dayListInt.contains(DateTime.))
                     final now = DateTime.now();
                     final historyQueryList = historySnapshot.data.docs;
                     bool habitCompletedToday = false;

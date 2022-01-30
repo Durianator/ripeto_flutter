@@ -1,9 +1,11 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ripeto_flutter/component.dart';
+import 'package:ripeto_flutter/service/notification_api.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -15,49 +17,16 @@ class ProgressScreen extends StatefulWidget {
 }
 
 class _ProgressScreenState extends State<ProgressScreen> {
-  DateTime _focusedDay = DateTime.now();
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   User loggedInUser;
-  DateTime _selectedDay = DateTime.now();
-  Map<DateTime, List<dynamic>> _events;
-  List<dynamic> _selectedEvents;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getCurrentUser();
-    _events = {};
-    _selectedEvents = [];
   }
-
-  Widget eventCard = Container();
-  Padding predefinedEventCard = Padding(
-    padding: const EdgeInsets.all(10.0),
-    child: Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Text(
-            'try',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
 
   void getCurrentUser() {
     try {
@@ -79,16 +48,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
           children: [
             progressScreenHeader(),
             Expanded(
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    // progressCalendar(),
-                    sfCalendar(),
-                    eventCard,
-                    streakCard(5),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  sfCalendar(),
+                  Divider(
+                    height: 0.0,
+                    thickness: 1.0,
+                  ),
+                  streakCardList(5),
+                ],
               ),
             ),
             Divider(
@@ -101,7 +69,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  StreamBuilder streakCard(int day) {
+  StreamBuilder streakCardList(int day) {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore
           .collection('userData')
@@ -109,28 +77,30 @@ class _ProgressScreenState extends State<ProgressScreen> {
           .collection('habit')
           .snapshots(),
       builder: (context, snapshot) {
-        //TODO: If snapshot has data, continue here.
-        return Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
-                child: Text(
-                  day.toString() + ' Days Streak',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+        final habitQueryList = snapshot.data.docs;
+        List<Widget> allStreakCard = [
+          SizedBox(height: 20.0),
+        ]; //Sized box before the first habit card.
+
+        for (int i = 0; i < habitQueryList.length; i++) {
+          var streak = habitQueryList[i];
+          allStreakCard.add(
+            streakCard(streak),
+          );
+          allStreakCard.add(
+            SizedBox(height: 20.0),
+          );
+          print('Streak card ' +
+              streak.get('habit_name') +
+              ' generation successful.');
+        }
+
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: allStreakCard,
               ),
             ),
           ),
@@ -139,62 +109,71 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Padding progressCalendar() {
-    return Padding(
-      padding: EdgeInsets.all(30.0),
-      child: TableCalendar(
-          firstDay: DateTime.utc(2020),
-          lastDay: DateTime.utc(2025),
-          focusedDay: _focusedDay,
-          onPageChanged: (daySelected) {
-            setState(() {
-              _focusedDay = daySelected;
-            });
-          },
-          selectedDayPredicate: (day) {
-            return isSameDay(_selectedDay, day);
-          },
-          eventLoader: (day) {
-            if (day.weekday == DateTime.saturday ||
-                day.weekday == DateTime.sunday) {
-              eventCard = predefinedEventCard;
-              return ['test'];
-            } else
-              return null;
-          },
-          onDaySelected: (selectedDay, focusedDay) {
-            setState(() {
-              _selectedDay = selectedDay;
-              _focusedDay = focusedDay; // update `_focusedDay` here as well
-              // _selectedEvents = _events;
-            });
-          }),
-    );
+  Widget streakCard(QueryDocumentSnapshot streak) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: streak.reference.collection('history').snapshots(),
+        builder: (context, snapshot) {
+          int randomInt2To9 = Random().nextInt(8) + 2;
+          int greenShade = randomInt2To9 * 100;
+
+          var historyQueryList = snapshot.data.docs;
+
+          List<DateTime> historyDateTimeList =
+              convertQueryListToDateTimeList(historyQueryList);
+
+          DateTime earliestDateTime = findEarliestDateTime(historyDateTimeList);
+
+          for (int i = 0; i < historyQueryList.length; i++) {
+            var history = historyQueryList[i];
+
+            history.get('timestamp');
+          }
+
+          return Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.green[greenShade],
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    streak.get(habitNameKey),
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    randomInt2To9.toString() + ' Streak',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Padding sfCalendar() {
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: SfCalendar(
+        firstDayOfWeek: 1,
         view: CalendarView.week,
         dataSource: MeetingDataSource(getAppointment()),
       ),
     );
-  }
-
-  List<Event> _getEventsForDay(DateTime day) {
-    // Implementation example
-    return kEvents[day] ?? [];
-  }
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    if (!isSameDay(_selectedDay, selectedDay)) {
-      setState(() {
-        _focusedDay = focusedDay;
-        _selectedDay = selectedDay;
-        _selectedEvents = _getEventsForDay(selectedDay);
-      });
-    }
   }
 
   Padding progressScreenHeader() {
@@ -217,22 +196,59 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
 List<Appointment> getAppointment() {
   List<Appointment> meetings = <Appointment>[];
+
   final DateTime now = DateTime.now();
-  final DateTime startTime = DateTime(now.year, now.month, now.day, 9, 0, 0);
+  // final DateTime jogging = DateTime(now.year,now.minute)
+  final DateTime startTime = DateTime(now.year, now.month, now.day, 6, 50, 0);
 
   final DateTime endTime = startTime.add(Duration(hours: 1));
 
   meetings.add(Appointment(
-    startTime: startTime,
-    endTime: endTime,
-    subject: 'Jogging after breakfast',
+    startTime: DateTime(2022, 1, 31, 6, 50),
+    endTime: DateTime(2022, 1, 31, 6, 50).add(Duration(hours: 2)),
+    subject: 'Jogging after Subuh Prayer',
+    color: Colors.green,
+
+    // recurrenceRule: 'FREQ=WEEKLY;COUNT=10',
+  ));
+
+  meetings.add(Appointment(
+    startTime: DateTime(2022, 2, 1, 6, 50),
+    endTime: DateTime(2022, 2, 1, 6, 50).add(Duration(hours: 2)),
+    subject: 'Jogging after Subuh Prayer',
     color: Colors.grey,
   ));
+
   meetings.add(Appointment(
-    startTime: startTime.subtract(Duration(days: 6)),
-    endTime: startTime.subtract(Duration(days: 6)).add(Duration(hours: 1)),
-    subject: 'Reading book after breakfast',
+    startTime: DateTime(2022, 1, 24, 6, 50),
+    endTime: DateTime(2022, 1, 24, 6, 50).add(Duration(hours: 2)),
+    subject: 'Jogging after Subuh Prayer',
     color: Colors.green,
+
+    // recurrenceRule: 'FREQ=WEEKLY;COUNT=10',
+  ));
+
+  meetings.add(Appointment(
+    startTime: DateTime(2022, 1, 25, 6, 50),
+    endTime: DateTime(2022, 1, 25, 6, 50).add(Duration(hours: 2)),
+    subject: 'Jogging after Subuh Prayer',
+    color: Colors.redAccent,
+
+    // recurrenceRule: 'FREQ=WEEKLY;COUNT=10',
+  ));
+
+  meetings.add(Appointment(
+    startTime: DateTime(2022, 1, 28, 17, 30),
+    endTime: DateTime(2022, 1, 28, 17, 30).add(Duration(hours: 2)),
+    subject: 'Reading book After work',
+    color: Colors.green,
+  ));
+
+  meetings.add(Appointment(
+    startTime: DateTime(2022, 2, 4, 17, 30),
+    endTime: DateTime(2022, 2, 4, 17, 30).add(Duration(hours: 2)),
+    subject: 'Reading book After work',
+    color: Colors.grey,
   ));
 
   return meetings;
