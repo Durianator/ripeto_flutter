@@ -73,10 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
           .doc(uid)
           .collection('habit')
           .doc(habitId)
-          .collection('habitCompleted')
+          .collection('history')
           .add({'timestamp': DateTime.now()});
-      showSpinner = false;
-      Navigator.pop(context);
+
+      setState(() {
+        showSpinner = false;
+      });
     } catch (e) {
       print(e);
     }
@@ -125,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 withNavBar: false,
                 pageTransitionAnimation: PageTransitionAnimation.cupertino,
               );
-              Navigator.pushNamed(context, AddHabitScreen.id);
+              // Navigator.pushNamed(context, AddHabitScreen.id);
             },
             child: Text('Add'),
           ),
@@ -158,11 +160,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 for (int i = 0; i < habitQueryList.length; i++) {
                   var habit = habitQueryList[i];
                   NotificationService().scheduleNotifications(i, habit);
-
+                  // habit.
                   allHabitCard.add(
                     habitCard(habit),
                   );
-                  allHabitCard.add(SizedBox(height: 20.0));
+                  allHabitCard.add(
+                    SizedBox(height: 20.0),
+                  );
                   print('Habit card ' +
                       habit.get('habit_name') +
                       ' generation successful.');
@@ -205,37 +209,112 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              habitQuerySnapshot.get(habitNameKey),
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            Text(
-              habitQuerySnapshot.get(triggerEventKey),
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 12.0,
-              ),
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            Text(
-              convertReminderTimeFirebaseToReminderTimeString(
-                  habitQuerySnapshot.get(reminderTimeKey)),
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 12.0,
-              ),
-            ),
-            SizedBox(
-              height: 5.0,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      habitQuerySnapshot.get(habitNameKey),
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text(
+                      habitQuerySnapshot.get(triggerEventKey),
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Text(
+                      convertReminderTimeFirebaseToReminderTimeString(
+                          habitQuerySnapshot.get(reminderTimeKey)),
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                  ],
+                ),
+                StreamBuilder<QuerySnapshot>(
+                  stream: habitQuerySnapshot.reference
+                      .collection('history')
+                      .snapshots(),
+                  builder: (context, historySnapshot) {
+                    List<String> frequency =
+                        convertFrequencyFirebaseDataToDayList(
+                            habitQuerySnapshot.get('frequency'));
+
+                    List<int> dayListInt = [];
+
+                    for (var element in frequency) {
+                      switch (element) {
+                        case 'Monday':
+                          dayListInt.add(1);
+                          break;
+                        case 'Tuesday':
+                          dayListInt.add(2);
+                          break;
+                        case 'Wednesday':
+                          dayListInt.add(3);
+                          break;
+                        case 'Thursday':
+                          dayListInt.add(4);
+                          break;
+                        case 'Friday':
+                          dayListInt.add(5);
+                          break;
+                        case 'Saturday':
+                          dayListInt.add(6);
+                          break;
+                        case 'Sunday':
+                          dayListInt.add(7);
+                          break;
+                      }
+                    }
+
+                    // if (dayListInt.contains(DateTime.))
+                    final now = DateTime.now();
+                    final historyQueryList = historySnapshot.data.docs;
+                    bool habitCompletedToday = false;
+                    for (int i = 0; i < historyQueryList.length; i++) {
+                      var historyTimestamp = DateTime.parse(historyQueryList[i]
+                          .get('timestamp')
+                          .toDate()
+                          .toString());
+                      if (historyTimestamp.isSameDate(now)) {
+                        habitCompletedToday = true;
+                      }
+                    }
+
+                    showSpinner = false;
+
+                    if (habitCompletedToday)
+                      return Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      );
+                    else
+                      return Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.green,
+                      );
+                  },
+                ),
+              ],
             ),
             buildChipForHabitCard(habitQuerySnapshot.get(frequencyKey)),
             SizedBox(
@@ -252,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.green,
                         ),
                         onTap: () async {
-                          String habitId = habitQuerySnapshot.get(habitIdKey);
+                          String habitId = habitQuerySnapshot.id;
                           checkOffHabit(habitId);
                         }),
                     InkWell(
@@ -291,13 +370,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               title: Text('Delete?'),
                               content: Text('Do you want to delete?'),
                               actions: [
-                                ElevatedButton(
+                                TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
                                   child: Text('No'),
                                 ),
-                                ElevatedButton(
+                                TextButton(
                                   onPressed: () async {
                                     deleteHabit(habitQuerySnapshot.id);
                                     Navigator.pop(context);
@@ -318,5 +397,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+}
+
+extension DateOnlyCompare on DateTime {
+  bool isSameDate(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
   }
 }

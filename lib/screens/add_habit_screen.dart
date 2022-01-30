@@ -63,6 +63,27 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                   },
                   labelText: 'Trigger Event',
                 ),
+                TextButton(
+                  child: Text('What is trigger event?'),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text('What is trigger event?'),
+                        content: Text(
+                            'A trigger is an event that will kick off that automatic urge to do a habit. For example, the trigger event phrase might be "I will do X after eating breakfast." '),
+                        actions: [
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 SizedBox(
                   height: 20.0,
                 ),

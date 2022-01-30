@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:ripeto_flutter/component.dart';
 import 'package:ripeto_flutter/screens/home_screen.dart';
 import 'package:ripeto_flutter/screens/login_screen.dart';
 import 'package:ripeto_flutter/screens/real_home_screen.dart';
+import 'package:ripeto_flutter/screens/update_profile_screen.dart';
 import 'package:ripeto_flutter/service/notification_api.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -24,17 +26,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             settingsScreenHeader(),
             Divider(height: 0.0),
-            settingsOption(
-              'Notification Setting',
-              () {
-                // NotificationService().scheduleNotifications();
-              },
-            ),
             Divider(height: 0.0),
             settingsOption(
               'Update Profile',
               () {
-                NotificationService().showNotification();
+                pushNewScreen(
+                  context,
+                  screen: UpdateProfileScreen(),
+                  withNavBar: false,
+                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                );
               },
             ),
             Divider(height: 0.0),
