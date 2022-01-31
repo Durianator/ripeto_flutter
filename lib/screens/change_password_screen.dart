@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ripeto_flutter/component.dart';
+import 'package:ripeto_flutter/screens/real_home_screen.dart';
+import 'package:ripeto_flutter/screens/settings_screen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   static const String id = 'change_password_screen';
@@ -8,85 +11,105 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  final _auth = FirebaseAuth.instance;
+  User loggedInUser;
+  String currentPassword;
+  String newPassword;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        print('Get current user successful');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void reauthenticateAuth() async {
+    loggedInUser.reauthenticateWithCredential(
+      EmailAuthProvider.credential(
+        email: loggedInUser.email,
+        password: currentPassword,
+      ),
+    );
+  }
+
+  void updatePassword() async {
+    loggedInUser.updatePassword(newPassword);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(50.0),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 30.0,
-            ),
-            Text(
-              'Change Password',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20.0,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(50.0),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 30.0,
               ),
-            ),
-            SizedBox(
-              height: 30.0,
-            ),
-            RipetoTextField(
-              onChanged: (value) {
-                // habitName = value;
-              },
-              labelText: 'Current Password',
-              obscureText: true,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            RipetoTextField(
-              onChanged: (value) {
-                // triggerEvent = value;
-              },
-              labelText: 'New Password',
-              obscureText: true,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            //TODO: Code this if have time.
-            // RipetoTextField(
-            //   onChanged: (value) {
-            //     // habitName = value;
-            //   },
-            //   labelText: 'Repeat Password',
-            // ),
-            // SizedBox(
-            //   height: 20.0,
-            // ),
-            ElevatedButton(
-              onPressed: () async {
-                // setState(() {
-                //   showSpinner = true;
-                // });
-                // try {
-                //   final uid = _auth.currentUser.uid;
-                //   //TODO: Refactor this.
-                //   await _firestore
-                //       .collection('userData')
-                //       .doc(uid)
-                //       .collection('habit')
-                //       .add({
-                //     habitNameKey: habitName,
-                //     triggerEventKey: triggerEvent,
-                //     reminderTimeKey: reminderTime,
-                //     frequencyKey: frequency.toString()
-                //   });
-                //   showSpinner = false;
-                //   Navigator.pop(context);
-                // } catch (e) {
-                //   print(e);
-                // }
-              },
-              child: Text('Confirm'),
-              style: ButtonStyle(),
-            ),
-          ],
+              Text(
+                'Change Password',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
+              ),
+              SizedBox(
+                height: 30.0,
+              ),
+              RipetoTextField(
+                onChanged: (value) {
+                  currentPassword = value;
+                },
+                labelText: 'Current Password',
+                obscureText: true,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              RipetoTextField(
+                onChanged: (value) {
+                  newPassword = value;
+                },
+                labelText: 'New Password',
+                obscureText: true,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              //TODO: Code this if have time.
+              // RipetoTextField(
+              //   onChanged: (value) {
+              //     // habitName = value;
+              //   },
+              //   labelText: 'Repeat Password',
+              // ),
+              // SizedBox(
+              //   height: 20.0,
+              // ),
+              ElevatedButton(
+                onPressed: () async {
+                  reauthenticateAuth();
+                  updatePassword();
+                  Navigator.pop(context);
+                },
+                child: Text('Confirm'),
+                style: ButtonStyle(),
+              ),
+            ],
+          ),
         ),
       ),
     ));

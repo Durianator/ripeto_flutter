@@ -116,6 +116,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
           int randomInt2To9 = Random().nextInt(8) + 2;
           int greenShade = randomInt2To9 * 100;
 
+          if (streak.get('habit_name') == 'Jogging')
+            randomInt2To9 = 2;
+          else
+            randomInt2To9 = 1;
+
           var historyQueryList = snapshot.data.docs;
 
           List<DateTime> historyDateTimeList =
@@ -208,8 +213,6 @@ List<Appointment> getAppointment() {
     endTime: DateTime(2022, 1, 31, 6, 50).add(Duration(hours: 2)),
     subject: 'Jogging after Subuh Prayer',
     color: Colors.green,
-
-    // recurrenceRule: 'FREQ=WEEKLY;COUNT=10',
   ));
 
   meetings.add(Appointment(
@@ -223,7 +226,7 @@ List<Appointment> getAppointment() {
     startTime: DateTime(2022, 1, 24, 6, 50),
     endTime: DateTime(2022, 1, 24, 6, 50).add(Duration(hours: 2)),
     subject: 'Jogging after Subuh Prayer',
-    color: Colors.green,
+    color: Colors.redAccent,
 
     // recurrenceRule: 'FREQ=WEEKLY;COUNT=10',
   ));
@@ -232,7 +235,7 @@ List<Appointment> getAppointment() {
     startTime: DateTime(2022, 1, 25, 6, 50),
     endTime: DateTime(2022, 1, 25, 6, 50).add(Duration(hours: 2)),
     subject: 'Jogging after Subuh Prayer',
-    color: Colors.redAccent,
+    color: Colors.green,
 
     // recurrenceRule: 'FREQ=WEEKLY;COUNT=10',
   ));
