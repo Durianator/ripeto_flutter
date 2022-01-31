@@ -114,6 +114,17 @@ class NotificationService {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        index,
+        'Habit Name' + ' after ' + 'Trigger Event',
+        "Open Ripeto to check off the habit.",
+        // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 3)),
+        tz.TZDateTime.from(DateTime(2022, 1, 31, 14, 17, 0), tz.local),
+        NotificationDetails(android: _androidNotificationDetails),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
   }
 }
 
